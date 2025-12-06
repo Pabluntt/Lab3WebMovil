@@ -20,11 +20,11 @@ node_modules
 /coverage
 
 # next.js
-/.next/
-/out/
+**/.next/
+**/out/
 
 # production
-/build
+**/build
 
 # misc
 .DS_Store
@@ -47,19 +47,20 @@ yarn-error.log*
 next-env.d.ts
 
 # dependencies
-/node_modules
+**/node_modules
 /.pnp
 .pnp.js
 
 # testing
-/coverage
+**/coverage
 
 # next.js
-/.next/
-/out/
+**/.next/
+**/out/
+**/.next
 
 # production
-/build
+**/build
 
 # misc
 .DS_Store
@@ -73,6 +74,7 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env*
 
 # vercel
 .vercel

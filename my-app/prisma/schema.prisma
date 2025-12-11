@@ -1,14 +1,73 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+// Entidad Principal: Videojuegos
+model Game {
+  id                  Int                @id @default(autoincrement())
+  igdbId              Int                @unique
+  name                String
+  rating              Float?
+  releaseDate         DateTime?
+  coverUrl            String?
+  
+  genres              GameGenre[]
+  platforms           GamePlatform[]
+  ratings             Rating[]
+  
+  @@index([rating])
+}
+
+// Entidad: Géneros
+model Genre {
+  id                  Int                @id @default(autoincrement())
+  name                String             @unique
+  games               GameGenre[]
+}
+
+// Entidad: Plataformas
+model Platform {
+  id                  Int                @id @default(autoincrement())
+  name                String             @unique
+  games               GamePlatform[]
+}
+
+// Entidad: Ratings
+model Rating {
+  id                  Int                @id @default(autoincrement())
+  gameId              Int
+  game                Game               @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  score               Float
+  userName            String
+  
+  @@index([gameId])
+}
+
+// Relación: Games <-> Genres
+model GameGenre {
+  id                  Int                @id @default(autoincrement())
+  gameId              Int
+  genreId             Int
+  game                Game               @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  genre               Genre              @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  
+  @@unique([gameId, genreId])
+}
+
+// Relación: Games <-> Platforms
+model GamePlatform {
+  id                  Int                @id @default(autoincrement())
+  gameId              Int
+  platformId          Int
+  game                Game               @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  platform            Platform           @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  
+  @@unique([gameId, platformId])
 }

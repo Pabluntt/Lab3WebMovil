@@ -60,6 +60,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '*.konsolinet.fi',
       },
+      {
+        protocol: 'https',
+        hostname: 'uvejuegos.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.uvejuegos.com',
+      },
     ],
   },
 };

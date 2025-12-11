@@ -129,26 +129,33 @@ export default function AddGameForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Añadir Nuevo Juego</h1>
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+        {/* Header con gradiente */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-8 sm:px-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white">🎮 Añadir Nuevo Juego</h1>
+          <p className="text-blue-100 text-sm sm:text-base mt-2">Completa el formulario para agregar un juego a tu biblioteca</p>
         </div>
-      )}
 
-      {success && (
-        <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-          ¡Juego creado exitosamente!
-        </div>
-      )}
+        {/* Contenido del formulario */}
+        <div className="px-4 py-6 sm:px-8 sm:py-8">
+          {error && (
+            <div className="mb-4 p-4 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 rounded-lg text-sm sm:text-base">
+              ❌ {error}
+            </div>
+          )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+          {success && (
+            <div className="mb-4 p-4 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-200 rounded-lg text-sm sm:text-base">
+              ✅ ¡Juego creado exitosamente!
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Nombre */}
           <div className="col-span-1 md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Nombre del Juego *
             </label>
             <input
@@ -157,14 +164,14 @@ export default function AddGameForm() {
               value={formData.name}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-base sm:text-lg transition-all"
               placeholder="Ej: The Legend of Zelda"
             />
           </div>
 
           {/* IGDB ID */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">
               IGDB ID *
             </label>
             <input
@@ -173,14 +180,14 @@ export default function AddGameForm() {
               value={formData.igdbId}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-base sm:text-lg transition-all"
               placeholder="Ej: 5"
             />
           </div>
 
           {/* Rating */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Calificación (0-100)
             </label>
             <input
@@ -191,14 +198,14 @@ export default function AddGameForm() {
               min="0"
               max="100"
               step="0.1"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-base sm:text-lg transition-all"
               placeholder="Ej: 85.5"
             />
           </div>
 
           {/* Fecha de lanzamiento */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Fecha de Lanzamiento
             </label>
             <input
@@ -206,13 +213,13 @@ export default function AddGameForm() {
               name="releaseDate"
               value={formData.releaseDate}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-base sm:text-lg transition-all"
             />
           </div>
 
           {/* URL de portada */}
           <div className="col-span-1 md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">
               URL de la Portada
             </label>
             <input
@@ -220,7 +227,7 @@ export default function AddGameForm() {
               name="coverUrl"
               value={formData.coverUrl}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-base sm:text-lg transition-all"
               placeholder="Ej: https://example.com/cover.jpg"
             />
           </div>
@@ -228,10 +235,10 @@ export default function AddGameForm() {
 
         {/* Géneros */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Géneros
+          <label className="block text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            🏷️ Géneros
           </label>
-          <div className="flex gap-2 mb-3">
+          <div className="flex flex-col sm:flex-row gap-2 mb-3">
             <input
               type="text"
               value={newGenre}
@@ -242,15 +249,15 @@ export default function AddGameForm() {
                   handleAddGenre();
                 }
               }}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Ej: Action, Adventure"
+              className="flex-1 px-4 py-3 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-base sm:text-lg transition-all"
+              placeholder="Ej: Action"
             />
             <button
               type="button"
               onClick={handleAddGenre}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+              className="px-4 sm:px-6 py-3 sm:py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-semibold whitespace-nowrap text-sm sm:text-base"
             >
-              Añadir
+              + Añadir
             </button>
           </div>
           {formData.genres.length > 0 && (
@@ -258,13 +265,13 @@ export default function AddGameForm() {
               {formData.genres.map((genre, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                  className="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
                 >
                   {genre}
                   <button
                     type="button"
                     onClick={() => handleRemoveGenre(index)}
-                    className="ml-2 text-blue-600 hover:text-blue-800"
+                    className="ml-2 font-bold hover:text-blue-600 dark:hover:text-blue-400"
                   >
                     ✕
                   </button>
@@ -276,10 +283,10 @@ export default function AddGameForm() {
 
         {/* Plataformas */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Plataformas
+          <label className="block text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            🖥️ Plataformas
           </label>
-          <div className="flex gap-2 mb-3">
+          <div className="flex flex-col sm:flex-row gap-2 mb-3">
             <input
               type="text"
               value={newPlatform}
@@ -290,15 +297,15 @@ export default function AddGameForm() {
                   handleAddPlatform();
                 }
               }}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Ej: PC, PlayStation 5"
+              className="flex-1 px-4 py-3 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-base sm:text-lg transition-all"
+              placeholder="Ej: PC"
             />
             <button
               type="button"
               onClick={handleAddPlatform}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+              className="px-4 sm:px-6 py-3 sm:py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-semibold whitespace-nowrap text-sm sm:text-base"
             >
-              Añadir
+              + Añadir
             </button>
           </div>
           {formData.platforms.length > 0 && (
@@ -306,13 +313,13 @@ export default function AddGameForm() {
               {formData.platforms.map((platform, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"
+                  className="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200"
                 >
                   {platform}
                   <button
                     type="button"
                     onClick={() => handleRemovePlatform(index)}
-                    className="ml-2 text-green-600 hover:text-green-800"
+                    className="ml-2 font-bold hover:text-green-600 dark:hover:text-green-400"
                   >
                     ✕
                   </button>
@@ -322,14 +329,14 @@ export default function AddGameForm() {
           )}
         </div>
 
-        {/* Botones */}
-        <div className="flex gap-4 pt-4">
+        {/* Botones - Full width en móvil */}
+        <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition disabled:bg-gray-400"
+            className="flex-1 px-6 py-3 sm:py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-green-700 transition disabled:from-gray-400 disabled:to-gray-400 text-base sm:text-lg"
           >
-            {loading ? 'Creando...' : 'Crear Juego'}
+            {loading ? '⏳ Creando...' : '✅ Crear Juego'}
           </button>
           <button
             type="reset"
@@ -344,12 +351,14 @@ export default function AddGameForm() {
                 platforms: [],
               })
             }
-            className="flex-1 px-6 py-3 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600 transition"
+            className="flex-1 px-6 py-3 sm:py-4 bg-gray-500 text-white font-bold rounded-lg hover:bg-gray-600 transition text-base sm:text-lg"
           >
-            Limpiar
+            🔄 Limpiar
           </button>
         </div>
-      </form>
+        </form>
+        </div>
+      </div>
     </div>
   );
 }

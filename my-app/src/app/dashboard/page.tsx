@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchGames, resetFilters, Game } from '@/store/gamesSlice';
@@ -8,9 +9,14 @@ import GameCard from '@/components/GameCard';
 import FiltersBar from '@/components/FiltersBar';
 import DeleteGamesButton from '@/components/DeleteGamesButton';
 import EditGameForm from '@/components/EditGameForm';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title } from 'chart.js';
+import { Pie, Bar, Line, Doughnut, Radar } from 'react-chartjs-2';
+
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title);
 
 export default function Dashboard() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { filteredGames, loading, error } = useAppSelector((state) => state.games);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedGames, setSelectedGames] = useState<number[]>([]);
@@ -44,6 +50,182 @@ export default function Dashboard() {
 
   const handleCloseEdit = () => {
     setEditingGame(null);
+  };
+
+  // Manejadores de clicks en gráficos
+  const handleGenreClick = (label: string) => {
+    const gamesWithGenre = filteredGames.filter(g =>
+      g.genres.some(genre => genre.name === label)
+    );
+    if (gamesWithGenre.length > 0) {
+      router.push(`/games/${gamesWithGenre[0].id}`);
+    }
+  };
+
+  const handlePlatformClick = (label: string) => {
+    const gamesWithPlatform = filteredGames.filter(g =>
+      g.platforms.some(platform => platform.name === label)
+    );
+    if (gamesWithPlatform.length > 0) {
+      router.push(`/games/${gamesWithPlatform[0].id}`);
+    }
+  };
+
+  const handleRatingClick = (index: number) => {
+    const ranges = [
+      { min: 0, max: 20 },
+      { min: 20, max: 40 },
+      { min: 40, max: 60 },
+      { min: 60, max: 80 },
+      { min: 80, max: 100 },
+    ];
+    const range = ranges[index];
+    const gamesInRange = filteredGames.filter(g =>
+      g.rating && g.rating >= range.min && g.rating < range.max
+    );
+    if (gamesInRange.length > 0) {
+      router.push(`/games/${gamesInRange[0].id}`);
+    }
+  };
+
+  const handleTopRatedClick = (index: number) => {
+    const topGames = filteredGames
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, 5);
+    if (topGames[index]) {
+      router.push(`/games/${topGames[index].id}`);
+    }
+  };
+
+  const handleYearClick = (label: string) => {
+    const year = parseInt(label);
+    const gamesInYear = filteredGames.filter(g =>
+      g.releaseDate && new Date(g.releaseDate).getFullYear() === year
+    );
+    if (gamesInYear.length > 0) {
+      router.push(`/games/${gamesInYear[0].id}`);
+    }
+  };
+
+  // Cálculo de datos para gráficos
+  const getGenreStats = () => {
+    const genreMap = new Map<string, number>();
+    filteredGames.forEach(game => {
+      game.genres.forEach(genre => {
+        genreMap.set(genre.name, (genreMap.get(genre.name) || 0) + 1);
+      });
+    });
+    return {
+      labels: Array.from(genreMap.keys()),
+      datasets: [{
+        data: Array.from(genreMap.values()),
+        backgroundColor: [
+          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+          '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF9F40'
+        ],
+      }]
+    };
+  };
+
+  const getPlatformStats = () => {
+    const platformMap = new Map<string, number>();
+    filteredGames.forEach(game => {
+      game.platforms.forEach(platform => {
+        platformMap.set(platform.name, (platformMap.get(platform.name) || 0) + 1);
+      });
+    });
+    return {
+      labels: Array.from(platformMap.keys()),
+      datasets: [{
+        label: 'Juegos por Plataforma',
+        data: Array.from(platformMap.values()),
+        backgroundColor: '#36A2EB',
+        borderColor: '#1e40af',
+        borderWidth: 1,
+      }]
+    };
+  };
+
+  const getRatingDistribution = () => {
+    const ranges = [
+      { min: 0, max: 20, label: '0-20' },
+      { min: 20, max: 40, label: '20-40' },
+      { min: 40, max: 60, label: '40-60' },
+      { min: 60, max: 80, label: '60-80' },
+      { min: 80, max: 100, label: '80-100' },
+    ];
+    const counts = ranges.map(range => 
+      filteredGames.filter(g => {
+        const rating = g.rating || 0;
+        return rating >= range.min && rating <= range.max;
+      }).length
+    );
+    return {
+      labels: ranges.map(r => r.label),
+      datasets: [{
+        label: 'Cantidad de Juegos',
+        data: counts,
+        borderColor: '#FF9F40',
+        backgroundColor: 'rgba(255, 159, 64, 0.1)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+      }]
+    };
+  };
+
+  const getTopRatedGames = () => {
+    const topGames = [...filteredGames]
+      .filter(g => g.rating)
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, 5);
+    
+    return {
+      labels: topGames.map(g => g.name.slice(0, 15)),
+      datasets: [{
+        label: 'Rating',
+        data: topGames.map(g => g.rating || 0),
+        backgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#4BC0C0',
+          '#9966FF'
+        ],
+        borderColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#4BC0C0',
+          '#9966FF'
+        ],
+        borderWidth: 2,
+      }]
+    };
+  };
+
+  const getYearDistribution = () => {
+    const yearMap = new Map<number, number>();
+    filteredGames.forEach(game => {
+      if (game.releaseDate) {
+        const year = new Date(game.releaseDate).getFullYear();
+        yearMap.set(year, (yearMap.get(year) || 0) + 1);
+      }
+    });
+    const sortedYears = Array.from(yearMap.entries())
+      .sort((a, b) => a[0] - b[0])
+      .slice(-10);
+    
+    return {
+      labels: sortedYears.map(y => y[0].toString()),
+      datasets: [{
+        label: 'Juegos por Año',
+        data: sortedYears.map(y => y[1]),
+        backgroundColor: '#9966FF',
+        borderColor: '#6b21a8',
+        borderWidth: 1,
+      }]
+    };
   };
 
   if (loading) {
@@ -176,8 +358,102 @@ export default function Dashboard() {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        {/* Sección de Métricas Clave */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h3 className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total de juegos</h3>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{filteredGames.length}</p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h3 className="text-gray-600 dark:text-gray-400 text-sm font-medium">Rating promedio</h3>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
+              {filteredGames.length > 0
+                ? ((filteredGames.reduce((sum, g) => sum + (g.rating || 0), 0) / filteredGames.length).toFixed(1))
+                : '0'}
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h3 className="text-gray-600 dark:text-gray-400 text-sm font-medium">Géneros únicos</h3>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
+              {new Set(filteredGames.flatMap(g => g.genres.map(g => g.name))).size}
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h3 className="text-gray-600 dark:text-gray-400 text-sm font-medium">Plataformas</h3>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
+              {new Set(filteredGames.flatMap(g => g.platforms.map(p => p.name))).size}
+            </p>
+          </div>
+        </div>
+
+        {/* Sección de Gráficos */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Gráfico 1: Géneros (Pie) */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Distribución por género</h2>
+            {filteredGames.length > 0 ? (
+              <div style={{ maxHeight: '300px', position: 'relative' }}>
+                <Pie data={getGenreStats()} options={{ maintainAspectRatio: false }} />
+              </div>
+            ) : (
+              <p className="text-gray-600 dark:text-gray-400 text-center py-8">Sin datos</p>
+            )}
+          </div>
+
+          {/* Gráfico 2: Plataformas (Bar) */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Juegos por plataforma</h2>
+            {filteredGames.length > 0 ? (
+              <div style={{ maxHeight: '300px', position: 'relative' }}>
+                <Bar data={getPlatformStats()} options={{ maintainAspectRatio: false, indexAxis: 'y' }} />
+              </div>
+            ) : (
+              <p className="text-gray-600 dark:text-gray-400 text-center py-8">Sin datos</p>
+            )}
+          </div>
+
+          {/* Gráfico 3: Distribución de Rating (Line) */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Distribución de ratings</h2>
+            {filteredGames.length > 0 ? (
+              <div style={{ maxHeight: '300px', position: 'relative' }}>
+                <Line data={getRatingDistribution()} options={{ maintainAspectRatio: false }} />
+              </div>
+            ) : (
+              <p className="text-gray-600 dark:text-gray-400 text-center py-8">Sin datos</p>
+            )}
+          </div>
+
+          {/* Gráfico 4: Top Rated (Doughnut) */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Top 5 juegos</h2>
+            {filteredGames.length > 0 ? (
+              <div style={{ maxHeight: '300px', position: 'relative' }}>
+                <Doughnut data={getTopRatedGames()} options={{ maintainAspectRatio: false }} />
+              </div>
+            ) : (
+              <p className="text-gray-600 dark:text-gray-400 text-center py-8">Sin datos</p>
+            )}
+          </div>
+
+          {/* Gráfico 5: Lanzamientos por Año (Bar) */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 lg:col-span-2">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Juegos por año de lanzamiento</h2>
+            {filteredGames.length > 0 ? (
+              <div style={{ maxHeight: '300px', position: 'relative' }}>
+                <Bar data={getYearDistribution()} options={{ maintainAspectRatio: false }} />
+              </div>
+            ) : (
+              <p className="text-gray-600 dark:text-gray-400 text-center py-8">Sin datos</p>
+            )}
+          </div>
+        </div>
+
         {/* Filtros */}
-        <FiltersBar />
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4"> Filtros y Búsqueda</h2>
+          <FiltersBar />
+        </div>
 
         {/* Lista de Juegos */}
         <section className="mt-8">

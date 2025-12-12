@@ -3,6 +3,7 @@
 import { Game } from '@/store/gamesSlice';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface GameCardProps {
   game: Game;
@@ -23,10 +24,14 @@ export default function GameCard({
   isEditMode = false,
   onEdit,
 }: GameCardProps) {
+  const router = useRouter();
+
   const handleCardClick = (e: React.MouseEvent) => {
     if (isSelectMode && onToggleSelect) {
       e.preventDefault();
       onToggleSelect(game.id);
+    } else if (!isSelectMode && !isEditMode) {
+      router.push(`/games/${game.id}`);
     }
   };
 
@@ -35,7 +40,7 @@ export default function GameCard({
       <div
         onClick={handleCardClick}
         className={`group flex gap-4 overflow-hidden rounded-lg bg-white p-4 shadow-md transition-all hover:shadow-xl dark:bg-gray-800 ${
-          isSelectMode ? 'cursor-pointer' : ''
+          isSelectMode || (!isSelectMode && !isEditMode) ? 'cursor-pointer' : ''
         } ${isSelected ? 'ring-2 ring-red-500' : ''}`}
       >
         {/* Checkbox */}
@@ -152,7 +157,7 @@ export default function GameCard({
     <div
       onClick={handleCardClick}
       className={`group overflow-hidden rounded-lg bg-white shadow-md transition-all hover:shadow-xl dark:bg-gray-800 relative ${
-        isSelectMode ? 'cursor-pointer' : ''
+        isSelectMode || (!isSelectMode && !isEditMode) ? 'cursor-pointer' : ''
       } ${isSelected ? 'ring-2 ring-red-500' : ''}`}
     >
       {/* Checkbox */}

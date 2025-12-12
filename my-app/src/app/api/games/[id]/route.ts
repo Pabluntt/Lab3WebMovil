@@ -1,6 +1,61 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> | { id: string } }
+) {
+  try {
+    const resolvedParams = await Promise.resolve(params);
+    const gameId = parseInt(resolvedParams.id);
+
+    if (isNaN(gameId)) {
+      return NextResponse.json(
+        { error: 'ID inválido' },
+        { status: 400 }
+      );
+    }
+
+    const game = await prisma.game.findUnique({
+      where: { id: gameId },
+      include: {
+        genres: {
+          include: {
+            genre: true,
+          },
+        },
+        platforms: {
+          include: {
+            platform: true,
+          },
+        },
+      },
+    });
+
+    if (!game) {
+      return NextResponse.json(
+        { error: 'Juego no encontrado' },
+        { status: 404 }
+      );
+    }
+
+    // Transformar la estructura para que coincida con el tipo Game
+    const transformedGame = {
+      ...game,
+      genres: game.genres.map((gg: any) => gg.genre),
+      platforms: game.platforms.map((gp: any) => gp.platform),
+    };
+
+    return NextResponse.json(transformedGame);
+  } catch (error) {
+    console.error('Error fetching game:', error);
+    return NextResponse.json(
+      { error: 'Error al obtener el juego' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> | { id: string } }
@@ -130,11 +185,11 @@ export async function PUT(
         rating: gameWithRelations?.rating,
         releaseDate: gameWithRelations?.releaseDate?.toISOString() || null,
         coverUrl: gameWithRelations?.coverUrl,
-        genres: gameWithRelations?.genres.map((gg) => ({
+        genres: gameWithRelations?.genres.map((gg: any) => ({
           id: gg.genre.id,
           name: gg.genre.name,
         })),
-        platforms: gameWithRelations?.platforms.map((gp) => ({
+        platforms: gameWithRelations?.platforms.map((gp: any) => ({
           id: gp.platform.id,
           name: gp.platform.name,
         })),

@@ -71,8 +71,7 @@ export default function GameDetailPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
           {/* Header con gradiente */}
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 sm:px-8 py-8">
-            <h1 className="text-3xl sm:text-4xl font-bold text-white">{game.name}</h1>
-            <p className="text-blue-100 text-sm sm:text-base mt-2">IGDB ID: {game.igdbId}</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">{game.name}</h1>
           </div>
 
           {/* Contenido */}
@@ -98,34 +97,36 @@ export default function GameDetailPage() {
 
               {/* Información del juego */}
               <div className="md:col-span-2 space-y-6">
-                {/* Rating */}
-                {game.rating && (
-                  <div className="flex items-center gap-4">
-                    <span className="text-5xl">⭐</span>
-                    <div>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Calificación</p>
-                      <p className="text-4xl font-bold text-gray-900 dark:text-white">{game.rating.toFixed(1)}</p>
-                      <p className="text-gray-500 dark:text-gray-400 text-xs">sobre 100</p>
+                {/* Rating y Fecha de lanzamiento */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {/* Rating */}
+                  {game.rating && (
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Calificación</p>
+                        <p className="text-4xl font-bold text-gray-900 dark:text-white">
+                          {game.rating.toFixed(1)} <span className="text-lg text-gray-500 dark:text-gray-400">sobre 100</span>
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Fecha de lanzamiento */}
-                {game.releaseDate && (
-                  <div className="flex items-center gap-4">
-                    <span className="text-3xl">📅</span>
-                    <div>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Fecha de Lanzamiento</p>
-                      <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-                        {new Date(game.releaseDate).toLocaleDateString('es-ES', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
-                      </p>
+                  {/* Fecha de lanzamiento */}
+                  {game.releaseDate && (
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Fecha de Lanzamiento</p>
+                        <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                          {new Date(game.releaseDate).toLocaleDateString('es-ES', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          })}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {/* Géneros */}
                 <div>

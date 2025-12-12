@@ -59,7 +59,13 @@ npm run dev
 
 6. **Abrir en navegador**
 ```
-http://localhost:3000
+http://localhost:3000/games
+```
+```
+http://localhost:3000/games/...(id del juego)
+```
+```
+http://localhost:3000/dashboard
 ```
 
 
